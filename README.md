@@ -1,41 +1,26 @@
 # Assemblyline
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/assemblyline`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is the new version of Assemblyline, it is a libary and a cli tool for building and testing applications in containers.
 
-TODO: Delete this and the text above, and describe your gem
+## Support
 
-## Installation
+Initialy ruby support is planned other languages will be added as required.
 
-Add this line to your application's Gemfile:
+## What will it do?
 
-```ruby
-gem 'assemblyline'
-```
+Assemblyline uses the Assemblyfile and other standard config files to:
 
-And then execute:
+* Generate Dockerfiles used to build prod and dev/test container images.
+* Generate kubernetes config to:
+  * Run the application in development
+  * Run the tests in development or on CI
+  * Run the application in prod like environments (prod, staging, QA etc)
+ 
+ It will also provide a developer friendly cli to orchistrate common dev and test tasks.
 
-    $ bundle
+## Container Images
 
-Or install it yourself as:
-
-    $ gem install assemblyline
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/assemblyline. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
+Building container images with a Dockerfile can get complex when trying to build
+minimal images. Assemblyline simplifies this by templating a best practice stratgy
+for each supported use case. If your needs are more complex you can access the
+full power of the Dockerfile by adding a template to your application.
