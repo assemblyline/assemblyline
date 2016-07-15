@@ -2,8 +2,9 @@ require "spec_helper"
 require "assemblyline/system_packages"
 
 RSpec.describe Assemblyline::SystemPackages do
-  subject { described_class.new(package_manager: "rubygems", platform: "alpine", version: "3.4", packages: packages) }
+  subject { described_class.new(package_manager: "rubygems", platform: platform, packages: packages) }
   let(:packages) { [] }
+  let(:platform) { double(:platform, name: "alpine", version: "3.4") }
 
   context "with a listed package" do
     let(:packages) { ["pg"] }
@@ -22,7 +23,7 @@ RSpec.describe Assemblyline::SystemPackages do
 
     context "no explicit rundeps" do
       it "empty run deps" do
-        expect(subject.run).to eq []
+        expect(subject.runtime).to eq []
       end
     end
   end

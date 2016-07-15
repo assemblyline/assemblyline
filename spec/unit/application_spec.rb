@@ -2,6 +2,8 @@ require "spec_helper"
 require "assemblyline/application"
 
 RSpec.describe Assemblyline::Application do
+  subject { described_class.new("spec/fixture/Assemblyfile") }
+
   describe ".load" do
     it "loads all of the Assemblyfiles in scope" do
       expect(described_class.load.size).to eq(1)
@@ -9,8 +11,6 @@ RSpec.describe Assemblyline::Application do
   end
 
   describe ".new" do
-    subject { described_class.new("spec/fixture/Assemblyfile") }
-
     it "sets up the path correctly" do
       expect(subject.path).to eq("spec/fixture")
     end
@@ -22,9 +22,18 @@ RSpec.describe Assemblyline::Application do
     it "sets up the repo correctly" do
       expect(subject.repo).to eq("quay.io/assemblyline/test-application")
     end
+  end
 
-    it "sets up the builder correctly" do
-      expect(subject.builder).to eq("ruby")
+  describe "#system_packages" do
+    it "lists the required build and runtime packages" do
+      expect(subject.system_packages.build).to eq ["build-base", "postgresql-dev"]
+      expect(subject.system_packages.runtime).to eq []
+    end
+  end
+
+  describe "#install" do
+    it "returns the commands to install the application" do
+      expect(subject.install).to eq ["bundle install -j4 -r3 --deployment"]
     end
   end
 end

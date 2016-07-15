@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require "assemblyline/application"
+require "erb"
+
+def template(platform)
+  ERB.new(
+    File.read(
+      File.join(
+        Gem.datadir("assemblyline"),
+        "docker",
+        platform.name,
+        platform.version,
+        "Dockerfile.erb",
+      )
+    )
+  )
+end
+
+Assemblyline::Application.load.each do |application|
+  Dir.chdir(application.path)  do
+    File.write("Dockerfile", template(application.platform).result(binding))
+    exit 1 unless system "docker build ."
+  end
+end

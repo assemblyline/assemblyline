@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    json (2.0.1)
+    pg (0.18.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  json
+  pg
+
+BUNDLED WITH
+   1.12.5

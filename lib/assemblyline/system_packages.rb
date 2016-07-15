@@ -2,10 +2,9 @@ require "json"
 
 module Assemblyline
   class SystemPackages
-    def initialize(package_manager:, platform:, version:, packages:)
+    def initialize(package_manager:, platform:, packages:)
       @package_manager = package_manager
       @platform = platform
-      @version = version
       @packages = packages
     end
 
@@ -13,13 +12,13 @@ module Assemblyline
       dependencies("build")
     end
 
-    def run
+    def runtime
       dependencies("run")
     end
 
     private
 
-    attr_reader :package_manager, :platform, :packages, :version
+    attr_reader :package_manager, :platform, :packages
 
     def dependencies(context)
       deps.map { |dep| dep[context] }.flatten.uniq.compact.sort
@@ -39,8 +38,8 @@ module Assemblyline
           File.join(
             Gem.datadir("assemblyline"),
             package_manager,
-            platform,
-            version,
+            platform.name,
+            platform.version,
             "dependencies.json",
           ),
         ),
