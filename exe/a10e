@@ -12,8 +12,8 @@ def template(platform)
         platform.name,
         platform.version,
         "Dockerfile.erb",
-      )
-    )
+      ),
+    ),
   )
 end
 

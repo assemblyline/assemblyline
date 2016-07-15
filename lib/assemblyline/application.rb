@@ -11,12 +11,18 @@ module Assemblyline
 
     def initialize(path)
       @path = File.dirname(path)
-      assemblyfile = TOML.load_file(path)
-      @name = assemblyfile["application"].fetch("name")
-      @repo = assemblyfile["application"].fetch("repo")
+      @assemblyfile = TOML.load_file(path)
     end
 
-    attr_reader :path, :name, :repo
+    attr_reader :path, :assemblyfile
+
+    def name
+      assemblyfile["application"].fetch("name")
+    end
+
+    def repo
+      assemblyfile["application"].fetch("repo")
+    end
 
     def install
       ["bundle install -j4 -r3 --deployment"]
@@ -27,11 +33,21 @@ module Assemblyline
         package_manager: "rubygems",
         platform: platform,
         packages: packages,
+        build:    builddeps,
       )
     end
 
     def packages
-      Bundler::LockfileParser.new(File.read(File.join(path, "Gemfile.lock"))).specs.map(&:name)
+      lockfile.specs.map(&:name)
+    end
+
+    def builddeps
+      return [] unless lockfile.sources.any? { |source| source.is_a? Bundler::Source::Git }
+      ["git"]
+    end
+
+    def lockfile
+      @_lockfile ||= Bundler::LockfileParser.new(File.read(File.join(path, "Gemfile.lock")))
     end
 
     def platform

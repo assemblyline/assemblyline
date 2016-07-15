@@ -2,17 +2,17 @@ require "spec_helper"
 require "assemblyline/application"
 
 RSpec.describe Assemblyline::Application do
-  subject { described_class.new("spec/fixture/Assemblyfile") }
+  subject { described_class.new("spec/fixture/basic/Assemblyfile") }
 
   describe ".load" do
     it "loads all of the Assemblyfiles in scope" do
-      expect(described_class.load.size).to eq(1)
+      expect(described_class.load.size).to eq(2)
     end
   end
 
   describe ".new" do
     it "sets up the path correctly" do
-      expect(subject.path).to eq("spec/fixture")
+      expect(subject.path).to eq("spec/fixture/basic")
     end
 
     it "sets up the name correctly" do
@@ -34,6 +34,13 @@ RSpec.describe Assemblyline::Application do
   describe "#install" do
     it "returns the commands to install the application" do
       expect(subject.install).to eq ["bundle install -j4 -r3 --deployment"]
+    end
+  end
+
+  context "git source" do
+    subject { described_class.new("spec/fixture/git/Assemblyfile") }
+    it "adds git to the build packages" do
+      expect(subject.system_packages.build).to include "git"
     end
   end
 end
