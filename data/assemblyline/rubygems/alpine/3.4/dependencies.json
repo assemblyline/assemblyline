@@ -1,0 +1,10 @@
+[
+  {
+    "name": "json",
+    "build": ["build-base"]
+  },
+  { 
+    "name": "pg",
+    "build": ["build-base", "postgresql-dev"]
+  }
+]
