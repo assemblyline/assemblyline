@@ -25,7 +25,7 @@ module Assemblyline
     end
 
     def install
-      ["bundle install -j4 -r3 --deployment"]
+      ["bundle install -j4 -r3"]
     end
 
     def system_packages
