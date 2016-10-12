@@ -2,13 +2,6 @@ require "json"
 
 module Assemblyline
   class SystemPackages
-    def initialize(options = {})
-      @package_manager = options.fetch(:package_manager)
-      @platform        = options.fetch(:platform)
-      @packages        = options.fetch(:packages)
-      @options         = options
-    end
-
     def build
       dependencies("build")
     end
@@ -19,12 +12,8 @@ module Assemblyline
 
     private
 
-    attr_reader :package_manager, :platform, :packages, :options
-
     def dependencies(context)
-      detected = deps.map { |dep| dep[context] }.flatten
-      explicit = options.fetch(context.intern, [])
-      (detected + explicit).uniq.compact.sort
+      deps.map { |dep| dep[context] }.flatten.uniq.compact.sort
     end
 
     def deps
@@ -35,18 +24,17 @@ module Assemblyline
       end.flatten
     end
 
+    def packages
+      lockfile.specs.map(&:name)
+    end
+
+    def lockfile
+      @_lockfile ||= Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+    end
+
+
     def data
-      @data ||= JSON.parse(
-        File.read(
-          File.join(
-            Gem.datadir("assemblyline"),
-            package_manager,
-            platform.name,
-            platform.version,
-            "dependencies.json",
-          ),
-        ),
-      )
+      @data ||= JSON.parse(File.read("/etc/a10e/dependencies.json"))
     end
   end
 end

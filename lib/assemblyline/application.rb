@@ -47,7 +47,7 @@ module Assemblyline
     end
 
     def lockfile
-      @_lockfile ||= Bundler::LockfileParser.new(File.read(File.join(path, "Gemfile.lock")))
+      @_lockfile ||= Bundler::LockfileParser.new(File.read("Gemfile.lock"))
     end
 
     def platform

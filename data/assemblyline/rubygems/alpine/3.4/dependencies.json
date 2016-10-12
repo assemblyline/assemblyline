@@ -3,6 +3,10 @@
     "name": "json",
     "build": ["build-base"]
   },
+  {
+    "name": "mysql2",
+    "build": ["mariadb-dev"]
+  },
   { 
     "name": "pg",
     "build": ["build-base", "postgresql-dev"]

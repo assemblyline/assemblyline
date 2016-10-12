@@ -1,29 +1,16 @@
-FROM ruby:2.2.5-alpine
+FROM cc1e4849d52f
 
 WORKDIR /usr/src
 
 COPY Gemfile ./
 COPY Gemfile.lock ./
+COPY Assemblyfile ./
 
-RUN set -ex \
-  && apk add --no-cache --virtual .a10e.builddeps \
-       scanelf \
-       <% application.system_packages.build.each do |dep| %><%= dep %> \
-       <% end %>
+RUN set -e \
+  && adduser -D conan \
+  && chown -R conan /usr/local/bundle/ \
+  && a10e_install
 
-  <% application.install.each do |cmd| %>&& <%= cmd %> \
-  <% end %>
-
-  && runDeps="$( \
-    scanelf --needed --nobanner --recursive vendor \
-      | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-      | sort -u \
-      | xargs -r apk info --installed \
-      | sort -u \
-  )" \
-
-  && apk add --no-cache --virtual .a10e.rundeps $runDeps \
-    <% application.system_packages.runtime.each do |dep| %><%= dep %> \
-    <% end %>
-
-  && apk del .a10e.builddeps
+COPY . .
+RUN chown -R conan /usr/src
+USER conan
