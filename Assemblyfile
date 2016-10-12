@@ -1,0 +1,72 @@
+---
+name: exemplary
+repo: quay.io/reevoo/exemplary
+
+buildSteps:
+- type: bundle
+- type: npm
+- type: command
+  commands: 
+  - [ "bin/rails", "assets:precompile" ]
+
+testSteps:
+- name: unit
+  commands: 
+  - ["bundle exec", "rake", "spec:unit"]
+- name: acceptance
+  commands:
+  - ["bundle exec", "rake", "spec:acceptance"]
+  backends:
+  - db
+  - queue
+- name: lint
+  commands: 
+  - ["bundle exec", "rake", "reevoocop"]
+
+deploySteps:
+- type: command
+  commands:
+  - ["bundle exec", "rake", "db:migrate"]
+
+backends:
+- name: db
+  type: postgres
+  version: 1.2.3
+- name: queue
+  type: rabbitmq
+  version: 5.6.7
+
+pods:
+- name: api
+  containers: 
+  - command: [ bin/puma ]
+    ports:
+    - containerPort: 9292
+      servicePort: 80
+    resources:
+      limits:
+        memory: 128Mi
+        cpu: 500m
+
+- name: worker
+  containers: 
+  - command: [ bin/sneakers ]
+    resources:
+      limits:
+        memory: 128Mi
+        cpu: 500m
+      requests:
+        memory: 60Mi
+        cpu: 10m
+
+- name: cleanup
+  schedule: 0 20 * * *
+  containers: 
+  - command: [ bin/cleanup ]
+    resources:
+      limits:
+        memory: 128Mi
+        cpu: 500m
+      requests:
+        memory: 60Mi
+        cpu: 10m
